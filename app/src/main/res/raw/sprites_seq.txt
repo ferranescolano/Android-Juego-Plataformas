@@ -1,0 +1,11 @@
+0:12x28,13,14                           //  0 = BONK STANDING
+1:6,7,8,9                               //  1 = BONK WALKING LEFT
+2:0,1,2,3                               //  2 = BONK WALKING RIGHT
+3:47,48,49,50,51,50,49,48               //  3 = BONK DEAD
+4:10                                    //  4 = BONK JUMPING LEFT
+5:4                                     //  5 = BONK JUMPING RIGHT
+6:11                                    //  6 = BONK FALLING LEFT
+7:5                                     //  7 = BONK FALLING RIGHT
+8:15                                    //  8 = BONK JUMPING/FALLING FRONT
+9:29,30,31,32,33                        //  9 = ROTATING COIN
+10:16,17,16,17,16,17,18,19,18,19,18,19  // 10 = CRAB PINCERS' DANCE
