@@ -15,6 +15,7 @@ import android.widget.Toast;
 import org.w3c.dom.Text;
 
 import java.util.Locale;
+import java.util.Timer;
 
 import cat.flx.plataformes.R;
 import cat.flx.plataformes.engine.Game;
@@ -24,6 +25,7 @@ import cat.flx.plataformes.engine.OnContactListener;
 import cat.flx.plataformes.engine.TiledScene;
 import cat.flx.plataformes.engine.Touch;
 import cat.flx.plataformes.game.characters.Bonk;
+import cat.flx.plataformes.game.characters.Booster;
 import cat.flx.plataformes.game.characters.Coin;
 import cat.flx.plataformes.game.characters.Crab;
 
@@ -35,6 +37,7 @@ class Scene01 extends TiledScene implements OnContactListener {
     // We keep a specific reference to the player
     private Bonk bonk;
 
+    int CoinValue = 10;
     Button saveButton;
     boolean isPaused = false;
     //Boolean retryMenu = false;
@@ -66,6 +69,7 @@ class Scene01 extends TiledScene implements OnContactListener {
         // Add contact listeners by tag names
         this.addContactListener("bonk", "enemy", this);
         this.addContactListener("bonk", "coin", this);
+        this.addContactListener("bonk", "booster", this );
         // Prepare the painters for drawing
         paintKeyBackground = new Paint();
         paintButton = new Paint();
@@ -125,6 +129,14 @@ class Scene01 extends TiledScene implements OnContactListener {
             int crabX1 = Integer.parseInt(parts2[1].trim()) * 16;
             int crabY = Integer.parseInt(parts2[2].trim()) * 16;
             return new Crab(game, crabX0, crabX1, crabY);
+        }
+
+        if(cmd.equals("BOOSTER")){
+            String[] parts2 = args.split(",");
+            if (parts2.length != 2) return null;
+            int boosterX = Integer.parseInt(parts2[0].trim()) * 16;
+            int boosterY = Integer.parseInt(parts2[1].trim()) * 16;
+            return new Booster(game, boosterX, boosterY);
         }
         // Test the common basic parser
         return super.parseLine(cmd, args);
@@ -236,11 +248,12 @@ class Scene01 extends TiledScene implements OnContactListener {
     @Override
     public void onContact(String tag1, GameObject object1, String tag2, GameObject object2) {
         Log.d("flx", "Contact between a " + tag1 + " and " + tag2);
+        Log.d("flx", "Contact between a " + tag1 + " and " + tag2);
         // Contact between Bonk and a coin
         if (tag2.equals("coin")) {
             this.getGame().getAudio().playSoundFX(0);
             object2.removeFromScene();
-            bonk.addScore(10);
+            bonk.addScore(CoinValue);
         }
         // Contact between Bonk and an enemy
         else if (tag2.equals("enemy")) {
@@ -248,6 +261,11 @@ class Scene01 extends TiledScene implements OnContactListener {
             //object2.removeFromScene();
             bonk.die();
 
+        }
+        else if(tag2.equals("booster")){
+           // bonk.setScore(bonk.getScore() + 1);
+            object2.removeFromScene();
+            bonk.addScore(40);
         }
     }
 
@@ -265,7 +283,7 @@ class Scene01 extends TiledScene implements OnContactListener {
         canvas.drawText("»", 28, 92, paintKeySymbol);
         canvas.drawRect(81, 76, 99, 99, paintKeyBackground);
         canvas.drawText("^", 88, 92, paintKeySymbol);
-        canvas.drawRect(120, 2, 80, 13, paintLivesBg);
+        canvas.drawRect(120, 4, 80, 13, paintLivesBg);
         canvas.drawRect(80, 12, 140, 21, paintButton);
         canvas.drawText("Lives: " + bonk.health, 81, 10, paintLivesScore);
 

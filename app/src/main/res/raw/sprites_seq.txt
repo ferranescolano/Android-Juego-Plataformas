@@ -9,3 +9,4 @@
 8:15                                    //  8 = BONK JUMPING/FALLING FRONT
 9:29,30,31,32,33                        //  9 = ROTATING COIN
 10:16,17,16,17,16,17,18,19,18,19,18,19  // 10 = CRAB PINCERS' DANCE
+11:39                                  // 11 = BOOSTER MUSHROOM
