@@ -35,7 +35,7 @@ public class Game {
     public void pause() { paused = true; }
 
     // Sets the current scene
-    protected void loadScene(Scene scene) { this.scene = scene; }
+    public void loadScene(Scene scene) { this.scene = scene; }
 
     // Process input from user
     void processInput() {

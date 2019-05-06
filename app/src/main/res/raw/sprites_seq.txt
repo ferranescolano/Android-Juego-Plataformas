@@ -11,3 +11,4 @@
 10:16,17,16,17,16,17,18,19,18,19,18,19  // 10 = CRAB PINCERS' DANCE
 11:39                                   // 11 = BOOSTER MUSHROOM
 12:43                                   // 12 = END OF SCENE
+13:24                                   // 13 = TELEPORT TILE

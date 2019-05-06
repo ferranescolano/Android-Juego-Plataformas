@@ -35,4 +35,5 @@ WATER  = 15,23,24,25
 
 COIN   = 10,7
 COIN   = 15,4
+TELEPORT  = 17,2
 

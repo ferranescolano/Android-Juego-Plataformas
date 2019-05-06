@@ -3,19 +3,14 @@ package cat.flx.plataformes.game;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.PorterDuff;
 import android.graphics.Typeface;
 import android.support.v4.content.res.ResourcesCompat;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
-import android.widget.Button;
 import android.widget.Toast;
 
-import org.w3c.dom.Text;
-
 import java.util.Locale;
-import java.util.Timer;
 
 import cat.flx.plataformes.R;
 import cat.flx.plataformes.engine.Game;
@@ -29,29 +24,23 @@ import cat.flx.plataformes.game.characters.Booster;
 import cat.flx.plataformes.game.characters.Coin;
 import cat.flx.plataformes.game.characters.Crab;
 import cat.flx.plataformes.game.characters.EndScene;
+import cat.flx.plataformes.game.characters.Teleport;
 
 import static cat.flx.plataformes.game.characters.Bonk.STATE_STANDING_FRONT;
 
-// A fully playable tiled scene
-class Scene01 extends TiledScene implements OnContactListener {
 
-    // We keep a specific reference to the player
-    private Bonk bonk;
+public class Scene02 extends TiledScene implements OnContactListener {
 
-    int CoinValue = 10;
-    Button saveButton;
-    boolean isPaused = false;
-    //Boolean retryMenu = false;
-    // Used for specific pa nting
     private Paint paintKeySymbol, paintKeyBackground, paintScore,
             paintButton, paintPauseText, paintRetryButton, paintRetryText,
             paintExitButton, paintExitText, paintBigBackgroundSquare, paintLivesBg, paintLivesScore;
 
+    private Bonk bonk;
+    boolean isPaused = false;
+    int CoinValue = 10;
 
-    // Constructor
-    Scene01(Game game) {
+    public Scene02(Game game) {
         super(game);
-        // Load the bitmap set for this game
         GameEngine gameEngine = game.getGameEngine();
         gameEngine.loadBitmapSet(R.raw.sprites, R.raw.sprites_info, R.raw.sprites_seq);
 
@@ -66,12 +55,14 @@ class Scene01 extends TiledScene implements OnContactListener {
         // Pre-loading of sound effects
         game.getAudio().loadSoundFX(new int[]{ R.raw.coin, R.raw.die, R.raw.pause } );
         // Load the scene tiles from resource
-        this.loadFromFile(R.raw.mini);
+        this.loadFromFile(R.raw.scene);
         // Add contact listeners by tag names
         this.addContactListener("bonk", "enemy", this);
         this.addContactListener("bonk", "coin", this);
         this.addContactListener("bonk", "booster", this );
         this.addContactListener("bonk", "endObject", this);
+        this.addContactListener("bonk", "tp", this);
+
         // Prepare the painters for drawing
         paintKeyBackground = new Paint();
         paintButton = new Paint();
@@ -100,7 +91,7 @@ class Scene01 extends TiledScene implements OnContactListener {
         paintPauseText.setTextSize(6);
         paintExitButton.setColor(Color.rgb(246,51,255));
         //paintExitButton.setColor(Color.argb(100, 246,51,255));
-       // paintRetryButton.setColor(Color.argb(100, 0,0,0));
+        // paintRetryButton.setColor(Color.argb(100, 0,0,0));
         paintRetryButton.setColor(Color.rgb( 1, 189 , 254));
         paintRetryText.setColor(Color.WHITE);
         paintRetryText.setTextSize(6);
@@ -112,7 +103,41 @@ class Scene01 extends TiledScene implements OnContactListener {
         paintButton.setColor(Color.rgb(255, 179, 15));
     }
 
-    // Overrides the base parser adding specific syntax for coins and crabs
+    @Override
+    public void onContact(String tag1, GameObject object1, String tag2, GameObject object2) {
+
+
+        Log.d("flx", "Contact between a " + tag1 + " and " + tag2);
+        Log.d("flx", "Contact between a " + tag1 + " and " + tag2);
+        // Contact between Bonk and a coin
+        if (tag2.equals("coin")) {
+            this.getGame().getAudio().playSoundFX(0);
+            object2.removeFromScene();
+            bonk.addScore(CoinValue);
+        }
+        // Contact between Bonk and an enemy
+        else if (tag2.equals("enemy")) {
+            this.getGame().getAudio().playSoundFX(1);
+            //object2.removeFromScene();
+            bonk.die();
+
+        }
+        else if(tag2.equals("booster")){
+            // bonk.setScore(bonk.getScore() + 1);
+            object2.removeFromScene();
+            bonk.addScore(40);
+        }
+        else if(tag2.equals("endObject")){
+            object2.removeFromScene();
+            game.loadScene(new Scene02(game));
+
+        }
+        else if(tag2.equals("tp")){
+            bonk.reset(20, 20);
+        }
+
+    }
+
     @Override
     protected GameObject parseLine(String cmd, String args) {
         // Lines beginning with "COIN"
@@ -148,15 +173,22 @@ class Scene01 extends TiledScene implements OnContactListener {
             return new EndScene(game, boosterX, boosterY);
         }
 
+        if(cmd.equals("TELEPORT")){
+            String[] parts2 = args.split(",");
+            if (parts2.length != 2) return null;
+            int boosterX = Integer.parseInt(parts2[0].trim()) * 16;
+            int boosterY = Integer.parseInt(parts2[1].trim()) * 16;
+            return new Teleport(game, boosterX, boosterY);
+        }
+
 
         // Test the common basic parser
         return super.parseLine(cmd, args);
     }
 
-    // User input processing
     @Override
     public void processInput() {
-        // Iterate over all the queued touch events
+
         Touch touch;
         while ((touch = game.getGameEngine().consumeTouch()) != null) {
             // Convert the X,Y to percentages of screen
@@ -174,7 +206,7 @@ class Scene01 extends TiledScene implements OnContactListener {
             }
             else if(((y < 60) && (y> 40)) && ((x < 45) && (x > 25))){
 
-               if(bonk.isDead) {
+                if(bonk.isDead) {
                     bonk.state = STATE_STANDING_FRONT;
                     bonk.health = 3;
                     bonk.reset(20, 30);
@@ -252,40 +284,9 @@ class Scene01 extends TiledScene implements OnContactListener {
                     break;
             }
         }
+
     }
 
-
-
-    @Override
-    public void onContact(String tag1, GameObject object1, String tag2, GameObject object2) {
-        Log.d("flx", "Contact between a " + tag1 + " and " + tag2);
-        Log.d("flx", "Contact between a " + tag1 + " and " + tag2);
-        // Contact between Bonk and a coin
-        if (tag2.equals("coin")) {
-            this.getGame().getAudio().playSoundFX(0);
-            object2.removeFromScene();
-            bonk.addScore(CoinValue);
-        }
-        // Contact between Bonk and an enemy
-        else if (tag2.equals("enemy")) {
-            this.getGame().getAudio().playSoundFX(1);
-            //object2.removeFromScene();
-            bonk.die();
-
-        }
-        else if(tag2.equals("booster")){
-           // bonk.setScore(bonk.getScore() + 1);
-            object2.removeFromScene();
-            bonk.addScore(40);
-        }
-        else if(tag2.equals("endObject")){
-            object2.removeFromScene();
-            game.loadScene(new Scene02(game));
-
-        }
-    }
-
-    // Overrides the basic draw by adding the translucent keyboard and the score
     @Override
     public void draw(Canvas canvas) {
         super.draw(canvas);
@@ -310,20 +311,20 @@ class Scene01 extends TiledScene implements OnContactListener {
             canvas.drawText("PAUSE", 81, 19, paintPauseText);
         }
 
-         if(bonk.isDead() == true){
-        canvas.drawRect( 100, 100, -40, -20, paintBigBackgroundSquare);
+        if(bonk.isDead() == true){
+            canvas.drawRect( 100, 100, -40, -20, paintBigBackgroundSquare);
 
             canvas.drawRect(25, 50, 45, 60, paintRetryButton);
             canvas.drawRect( 55, 50, 75, 60, paintExitButton);
-        canvas.drawText("Retry", 28, 57, paintRetryText);
-        canvas.drawText("Exit", 60, 57, paintExitText);
+            canvas.drawText("Retry", 28, 57, paintRetryText);
+            canvas.drawText("Exit", 60, 57, paintExitText);
 
 
 
         }
 
 
-            canvas.restore();
+        canvas.restore();
 
         // Score on top-right corner
         canvas.scale(getScale(), getScale());
@@ -332,4 +333,5 @@ class Scene01 extends TiledScene implements OnContactListener {
         canvas.drawText(score, getScaledWidth() - 50, 10, paintScore);
 
     }
+
 }
