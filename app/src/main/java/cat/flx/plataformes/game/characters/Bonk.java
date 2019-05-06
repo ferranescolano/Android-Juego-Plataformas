@@ -25,6 +25,7 @@ public class Bonk extends GameObject {
     public int health = 3;
     private Toast toast;
     public boolean isDead = false;
+    public int boosterTime;
 
 
     // Useful constants
@@ -122,7 +123,18 @@ public class Bonk extends GameObject {
     @Override public void physics(long deltaTime) {
         // If died, no physics
         if (state == STATE_DEAD) return;
+        boosterTime ++;
 
+        if(boosterTime > 4000) {
+            Toast toast = Toast.makeText(
+                    game.getGameEngine().getContext(),
+                    boosterTime,
+                    Toast.LENGTH_SHORT // Short Duration
+            );
+            toast.setGravity(Gravity.CENTER, 0, 0);
+            toast.show();
+
+        }
         // Analyze user input
         int vx = 0;
         if (this.isLeft()) vx = -this.vx;

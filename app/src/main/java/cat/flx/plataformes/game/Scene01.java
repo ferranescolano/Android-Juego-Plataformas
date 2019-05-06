@@ -28,6 +28,7 @@ import cat.flx.plataformes.game.characters.Bonk;
 import cat.flx.plataformes.game.characters.Booster;
 import cat.flx.plataformes.game.characters.Coin;
 import cat.flx.plataformes.game.characters.Crab;
+import cat.flx.plataformes.game.characters.EndScene;
 
 import static cat.flx.plataformes.game.characters.Bonk.STATE_STANDING_FRONT;
 
@@ -70,6 +71,7 @@ class Scene01 extends TiledScene implements OnContactListener {
         this.addContactListener("bonk", "enemy", this);
         this.addContactListener("bonk", "coin", this);
         this.addContactListener("bonk", "booster", this );
+        this.addContactListener("bonk", "endObject", this);
         // Prepare the painters for drawing
         paintKeyBackground = new Paint();
         paintButton = new Paint();
@@ -138,6 +140,15 @@ class Scene01 extends TiledScene implements OnContactListener {
             int boosterY = Integer.parseInt(parts2[1].trim()) * 16;
             return new Booster(game, boosterX, boosterY);
         }
+        if(cmd.equals("ENDOBJECT")){
+            String[] parts2 = args.split(",");
+            if (parts2.length != 2) return null;
+            int boosterX = Integer.parseInt(parts2[0].trim()) * 16;
+            int boosterY = Integer.parseInt(parts2[1].trim()) * 16;
+            return new EndScene(game, boosterX, boosterY);
+        }
+
+
         // Test the common basic parser
         return super.parseLine(cmd, args);
     }
