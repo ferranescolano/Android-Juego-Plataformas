@@ -24,6 +24,7 @@ import cat.flx.plataformes.game.characters.Booster;
 import cat.flx.plataformes.game.characters.Coin;
 import cat.flx.plataformes.game.characters.Crab;
 import cat.flx.plataformes.game.characters.EndScene;
+import cat.flx.plataformes.game.characters.KeyPlant;
 import cat.flx.plataformes.game.characters.Teleport;
 
 import static cat.flx.plataformes.game.characters.Bonk.STATE_STANDING_FRONT;
@@ -37,7 +38,9 @@ public class Scene02 extends TiledScene implements OnContactListener {
     int tpCount = 0;
     private Bonk bonk;
     boolean isPaused = false;
+    boolean keyPlantTaken = false;
     int CoinValue = 10;
+
 
     public Scene02(Game game) {
         super(game);
@@ -62,6 +65,7 @@ public class Scene02 extends TiledScene implements OnContactListener {
         this.addContactListener("bonk", "booster", this );
         this.addContactListener("bonk", "endObject", this);
         this.addContactListener("bonk", "tp", this);
+        this.addContactListener("bonk", "key", this);
 
         // Prepare the painters for drawing
         paintKeyBackground = new Paint();
@@ -133,18 +137,6 @@ public class Scene02 extends TiledScene implements OnContactListener {
 
         }
         else if(tag2.equals("tp")){
-
-            /*if(tpCount == 0) {
-
-
-                bonk.reset(460, 200);
-                tpCount = 1;
-            }
-            if(tpCount == 1){
-                bonk.reset(200, 200);
-                tpCount = 0;
-            }*/
-
             switch (tpCount){
                 case 0:
                     bonk.reset(460, 200);
@@ -156,6 +148,11 @@ public class Scene02 extends TiledScene implements OnContactListener {
                     tpCount = 0;
             }
             this.getGame().getAudio().playSoundFX(3);
+        }
+        else if(tag2.equals("key")){
+                keyPlantTaken = true;
+                object2.removeFromScene();
+
         }
 
     }
@@ -201,6 +198,13 @@ public class Scene02 extends TiledScene implements OnContactListener {
             int boosterX = Integer.parseInt(parts2[0].trim()) * 16;
             int boosterY = Integer.parseInt(parts2[1].trim()) * 16;
             return new Teleport(game, boosterX, boosterY);
+        }
+        if(cmd.equals("KEYPLANT")){
+            String[] parts2 = args.split(",");
+            if (parts2.length != 2) return null;
+            int boosterX = Integer.parseInt(parts2[0].trim()) * 16;
+            int boosterY = Integer.parseInt(parts2[1].trim()) * 16;
+            return new KeyPlant(game, boosterX, boosterY);
         }
 
 
@@ -265,26 +269,17 @@ public class Scene02 extends TiledScene implements OnContactListener {
 
                 }
                 else {
-                   /* Toast toast = Toast.makeText(
-                            game.getGameEngine().getContext(),
-                            "Paused",
-                            Toast.LENGTH_SHORT // Short Duration
-                    );
-                    toast.setGravity(Gravity.CENTER,0,0);
-                    toast.show();*/
+
                     game.pause();
                     isPaused = true;
                     this.getGame().getAudio().playSoundFX(2);
                 }
 
-              /*  if(game.isPaused()){
-                    game.resume();
-                }*/
 
 
-                //Toast.makeText(this, "Hola",Toast.LENGTH_LONG);
+
             }
-            // Rest of screen (pause)
+
 
         }
 
@@ -341,11 +336,7 @@ public class Scene02 extends TiledScene implements OnContactListener {
             canvas.drawRect( 55, 50, 75, 60, paintExitButton);
             canvas.drawText("Retry", 28, 57, paintRetryText);
             canvas.drawText("Exit", 60, 57, paintExitText);
-
-
-
         }
-
 
         canvas.restore();
 
