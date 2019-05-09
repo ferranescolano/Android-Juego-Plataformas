@@ -64,7 +64,7 @@ class Scene01 extends TiledScene implements OnContactListener {
         // The screen will hold 16 rows of tiles (16px height each)
         this.setScaledHeight(16 * 16);
         // Pre-loading of sound effects
-        game.getAudio().loadSoundFX(new int[]{ R.raw.coin, R.raw.die, R.raw.pause } );
+        game.getAudio().loadSoundFX(new int[]{ R.raw.coin, R.raw.die, R.raw.pause, R.raw.tpsound } );
         // Load the scene tiles from resource
         this.loadFromFile(R.raw.mini);
         // Add contact listeners by tag names

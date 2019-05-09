@@ -34,7 +34,7 @@ public class Scene02 extends TiledScene implements OnContactListener {
     private Paint paintKeySymbol, paintKeyBackground, paintScore,
             paintButton, paintPauseText, paintRetryButton, paintRetryText,
             paintExitButton, paintExitText, paintBigBackgroundSquare, paintLivesBg, paintLivesScore;
-
+    int tpCount = 0;
     private Bonk bonk;
     boolean isPaused = false;
     int CoinValue = 10;
@@ -53,7 +53,7 @@ public class Scene02 extends TiledScene implements OnContactListener {
         // The screen will hold 16 rows of tiles (16px height each)
         this.setScaledHeight(16 * 16);
         // Pre-loading of sound effects
-        game.getAudio().loadSoundFX(new int[]{ R.raw.coin, R.raw.die, R.raw.pause } );
+        game.getAudio().loadSoundFX(new int[]{ R.raw.coin, R.raw.die, R.raw.pause, R.raw.tpsound } );
         // Load the scene tiles from resource
         this.loadFromFile(R.raw.scene);
         // Add contact listeners by tag names
@@ -133,7 +133,29 @@ public class Scene02 extends TiledScene implements OnContactListener {
 
         }
         else if(tag2.equals("tp")){
-            bonk.reset(20, 20);
+
+            /*if(tpCount == 0) {
+
+
+                bonk.reset(460, 200);
+                tpCount = 1;
+            }
+            if(tpCount == 1){
+                bonk.reset(200, 200);
+                tpCount = 0;
+            }*/
+
+            switch (tpCount){
+                case 0:
+                    bonk.reset(460, 200);
+                    tpCount = 1;
+                    break;
+
+                case 1:
+                    bonk.reset(250, 200);
+                    tpCount = 0;
+            }
+            this.getGame().getAudio().playSoundFX(3);
         }
 
     }
@@ -239,6 +261,7 @@ public class Scene02 extends TiledScene implements OnContactListener {
                 if (game.isPaused()){
                     game.resume() ;
                     isPaused = false;
+                    this.getGame().getAudio().playSoundFX(2);
 
                 }
                 else {
@@ -251,7 +274,7 @@ public class Scene02 extends TiledScene implements OnContactListener {
                     toast.show();*/
                     game.pause();
                     isPaused = true;
-
+                    this.getGame().getAudio().playSoundFX(2);
                 }
 
               /*  if(game.isPaused()){
