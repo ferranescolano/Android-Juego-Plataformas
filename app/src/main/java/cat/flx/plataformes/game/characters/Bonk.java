@@ -29,8 +29,8 @@ public class Bonk extends GameObject {
 
 
     // Useful constants
-    private static final int MAX_VELOCITY = 4;
-    private static final int JUMP_VELOCITY = -8;
+    public static int MAX_VELOCITY = 4;
+    public static int JUMP_VELOCITY = -8;
     private static final int PAD_LEFT = 2;
     private static final int PAD_TOP = 0;
     private static final int COL_WIDTH = 20;
@@ -103,6 +103,7 @@ public class Bonk extends GameObject {
             toast.setGravity(Gravity.CENTER,0,0);
             toast.show();
 
+                //Make a function to upload the score and then compare it with other new scores
 
 
         }else{
