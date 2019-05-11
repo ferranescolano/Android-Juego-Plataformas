@@ -97,11 +97,13 @@ public class Bonk extends GameObject {
             changeState(STATE_DEAD);
             toast = Toast.makeText(
                     game.getGameEngine().getContext(),
-                    "Game Over Noob" ,
+                    "Game Over Noob"  ,
                     Toast.LENGTH_SHORT // Short Duration
             );
             toast.setGravity(Gravity.CENTER,0,0);
             toast.show();
+
+
 
         }else{
 

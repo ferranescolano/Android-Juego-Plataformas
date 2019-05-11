@@ -29,8 +29,7 @@ import cat.flx.plataformes.game.characters.Teleport;
 
 import static cat.flx.plataformes.game.characters.Bonk.STATE_STANDING_FRONT;
 
-
-public class Scene02 extends TiledScene implements OnContactListener {
+public class Scene03 extends TiledScene implements OnContactListener {
 
     private Paint paintKeySymbol, paintKeyBackground, paintScore,
             paintButton, paintPauseText, paintRetryButton, paintRetryText,
@@ -40,10 +39,10 @@ public class Scene02 extends TiledScene implements OnContactListener {
     boolean isPaused = false;
     boolean keyPlantTaken = false;
     int CoinValue = 10;
-    int totalScore = 0;
 
 
-    public Scene02(Game game) {
+
+    public Scene03(Game game) {
         super(game);
         GameEngine gameEngine = game.getGameEngine();
         gameEngine.loadBitmapSet(R.raw.sprites, R.raw.sprites_info, R.raw.sprites_seq);
@@ -125,8 +124,6 @@ public class Scene02 extends TiledScene implements OnContactListener {
             this.getGame().getAudio().playSoundFX(1);
             //object2.removeFromScene();
             bonk.die();
-            totalScore = bonk.getScore();
-
 
         }
         else if(tag2.equals("booster")){
@@ -135,21 +132,7 @@ public class Scene02 extends TiledScene implements OnContactListener {
             bonk.addScore(40);
         }
         else if(tag2.equals("endObject")){
-
-
-            if(keyPlantTaken == true){
-                object2.removeFromScene();
-
-                game.loadScene(new Scene03(game));
-            }else{
-                Toast toast = Toast.makeText(
-                        game.getGameEngine().getContext(),
-                        "You need to take the key to end the level",
-                        Toast.LENGTH_SHORT // Short Duration
-                );
-                toast.setGravity(Gravity.CENTER, 0, 0);
-                toast.show();
-            }
+            object2.removeFromScene();
 
 
         }
@@ -167,8 +150,8 @@ public class Scene02 extends TiledScene implements OnContactListener {
             this.getGame().getAudio().playSoundFX(3);
         }
         else if(tag2.equals("key")){
-                keyPlantTaken = true;
-                object2.removeFromScene();
+            keyPlantTaken = true;
+            object2.removeFromScene();
 
         }
 
@@ -364,5 +347,4 @@ public class Scene02 extends TiledScene implements OnContactListener {
         canvas.drawText(score, getScaledWidth() - 50, 10, paintScore);
 
     }
-
 }

@@ -39,8 +39,10 @@ class Scene01 extends TiledScene implements OnContactListener {
     private Bonk bonk;
 
     int CoinValue = 10;
+    int totalScore = 0;
     Button saveButton;
     boolean isPaused = false;
+    public Toast toast;
     //Boolean retryMenu = false;
     // Used for specific pa nting
     private Paint paintKeySymbol, paintKeyBackground, paintScore,
@@ -110,6 +112,7 @@ class Scene01 extends TiledScene implements OnContactListener {
 
         paintButton.setTypeface(typeface);
         paintButton.setColor(Color.rgb(255, 179, 15));
+
     }
 
     // Overrides the base parser adding specific syntax for coins and crabs
@@ -271,6 +274,15 @@ class Scene01 extends TiledScene implements OnContactListener {
             this.getGame().getAudio().playSoundFX(1);
             //object2.removeFromScene();
             bonk.die();
+            totalScore = bonk.getScore();
+           toast = Toast.makeText(
+                    game.getGameEngine().getContext(),
+                    totalScore ,
+                    Toast.LENGTH_SHORT // Short Duration
+            );
+            toast.setGravity(Gravity.CENTER,0,0);
+            toast.show();
+
 
         }
         else if(tag2.equals("booster")){
