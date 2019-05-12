@@ -25,6 +25,7 @@ import cat.flx.plataformes.game.characters.Coin;
 import cat.flx.plataformes.game.characters.Crab;
 import cat.flx.plataformes.game.characters.EndScene;
 import cat.flx.plataformes.game.characters.KeyPlant;
+import cat.flx.plataformes.game.characters.PreviousScene;
 import cat.flx.plataformes.game.characters.Teleport;
 
 import static cat.flx.plataformes.game.Scene01.totalScore;
@@ -69,6 +70,7 @@ public class Scene03 extends TiledScene implements OnContactListener {
         this.addContactListener("bonk", "endObject", this);
         this.addContactListener("bonk", "tp", this);
         this.addContactListener("bonk", "key", this);
+        this.addContactListener("bonk", "previousScene ", this);
         bonk.setScore(totalScore);
         // Prepare the painters for drawing
         paintKeyBackground = new Paint();
@@ -233,6 +235,13 @@ public class Scene03 extends TiledScene implements OnContactListener {
             int boosterX = Integer.parseInt(parts2[0].trim()) * 16;
             int boosterY = Integer.parseInt(parts2[1].trim()) * 16;
             return new KeyPlant(game, boosterX, boosterY);
+        }
+        if(cmd.equals("PREVIOUSSCENE")){
+            String[] parts2 = args.split(",");
+            if (parts2.length != 2) return null;
+            int boosterX = Integer.parseInt(parts2[0].trim()) * 16;
+            int boosterY = Integer.parseInt(parts2[1].trim()) * 16;
+            return new PreviousScene(game, boosterX, boosterY);
         }
 
 

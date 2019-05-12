@@ -13,3 +13,4 @@
 12:43                                   // 12 = END OF SCENE
 13:24                                   // 13 = TELEPORT TILE
 14:41                                   // 14 = KEY PLANT
+15:34                                   // 15 = PREVIOUS SCENE ITEM

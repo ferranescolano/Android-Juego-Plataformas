@@ -298,7 +298,7 @@ class Scene01 extends TiledScene implements OnContactListener {
            // bonk.setScore(bonk.getScore() + 1);
             object2.removeFromScene();
             //bonk.JUMP_VELOCITY = -13;
-            game.loadScene(new Scene03(game));
+            game.loadScene(new Scene02(game));
             totalScore = bonk.getScore();
         }
         else if(tag2.equals("endObject")){

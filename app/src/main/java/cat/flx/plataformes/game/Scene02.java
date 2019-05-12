@@ -159,6 +159,7 @@ public class Scene02 extends TiledScene implements OnContactListener {
                 case 0:
                     bonk.reset(460, 200);
                     tpCount = 1;
+                    bonk.JUMP_VELOCITY = -12;
                     break;
 
                 case 1:
