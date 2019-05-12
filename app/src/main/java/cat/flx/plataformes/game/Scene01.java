@@ -39,7 +39,7 @@ class Scene01 extends TiledScene implements OnContactListener {
     private Bonk bonk;
 
     int CoinValue = 10;
-    int totalScore = 0;
+    public static int totalScore = 0;
     Button saveButton;
     boolean isPaused = false;
     public Toast toast;
@@ -160,6 +160,8 @@ class Scene01 extends TiledScene implements OnContactListener {
     @Override
     public void processInput() {
         // Iterate over all the queued touch events
+        int actualPosition = bonk.getX();
+        Log.d("SomeText", String.valueOf(actualPosition));
         Touch touch;
         while ((touch = game.getGameEngine().consumeTouch()) != null) {
             // Convert the X,Y to percentages of screen
@@ -168,12 +170,19 @@ class Scene01 extends TiledScene implements OnContactListener {
             // Bottom-left corner (left-right)
             if ((y > 75) && (x < 40)) {
                 if (!touch.isTouching()) bonk.stopLR();     // STOP
-                else if (x < 20) bonk.goLeft();             // LEFT
+                else if (x < 20){ bonk.goLeft();
+
+
+                //bonk.setScore(bonk.getScore() + actualPosition);
+                }           // LEFT
                 else bonk.goRight();                        // RIGHT
             }
             // Bottom-right corner (jump)
             else if ((y > 75) && (x > 80) ) {               // JUMP
                 if (touch.isDown()) bonk.jump();
+
+
+
             }
             else if(((y < 60) && (y> 40)) && ((x < 45) && (x > 25))){
 
@@ -288,7 +297,9 @@ class Scene01 extends TiledScene implements OnContactListener {
         else if(tag2.equals("booster")){
            // bonk.setScore(bonk.getScore() + 1);
             object2.removeFromScene();
-            bonk.JUMP_VELOCITY = -13;
+            //bonk.JUMP_VELOCITY = -13;
+            game.loadScene(new Scene03(game));
+            totalScore = bonk.getScore();
         }
         else if(tag2.equals("endObject")){
             object2.removeFromScene();

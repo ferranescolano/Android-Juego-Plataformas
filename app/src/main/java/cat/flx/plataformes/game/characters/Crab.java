@@ -23,6 +23,8 @@ public class Crab extends Enemy {
         this.x += incX;
         if (x <= x0) incX = 1;
         if (x >= x1) incX = -1;
+
+
     }
 
     // The collision rect around the crab will consider the pincers' position

@@ -27,20 +27,22 @@ import cat.flx.plataformes.game.characters.EndScene;
 import cat.flx.plataformes.game.characters.KeyPlant;
 import cat.flx.plataformes.game.characters.Teleport;
 
+import static cat.flx.plataformes.game.Scene01.totalScore;
 import static cat.flx.plataformes.game.characters.Bonk.STATE_STANDING_FRONT;
 
 public class Scene03 extends TiledScene implements OnContactListener {
 
     private Paint paintKeySymbol, paintKeyBackground, paintScore,
             paintButton, paintPauseText, paintRetryButton, paintRetryText,
-            paintExitButton, paintExitText, paintBigBackgroundSquare, paintLivesBg, paintLivesScore;
+            paintExitButton, paintExitText, paintBigBackgroundSquare, paintLivesBg,
+            paintLivesScore, paintSpendMoneyBG, paintSpendMoneyText, paintNoSpendMoneyBG, paintNoSpendMoneyText, paintPayString1, paintPayString2;
     int tpCount = 0;
     private Bonk bonk;
     boolean isPaused = false;
     boolean keyPlantTaken = false;
     int CoinValue = 10;
-
-
+    boolean tpRepaired = false;
+    boolean showTpMessage = false;
 
     public Scene03(Game game) {
         super(game);
@@ -48,17 +50,18 @@ public class Scene03 extends TiledScene implements OnContactListener {
         gameEngine.loadBitmapSet(R.raw.sprites, R.raw.sprites_info, R.raw.sprites_seq);
 
         // Create the main character (player)
-        bonk = new Bonk(game, 20, 30);
+        bonk = new Bonk(game, 20, 170);
 
         this.add(bonk);
         // Set the follow camera to the player
         this.setCamera(bonk);
+
         // The screen will hold 16 rows of tiles (16px height each)
         this.setScaledHeight(16 * 16);
         // Pre-loading of sound effects
         game.getAudio().loadSoundFX(new int[]{ R.raw.coin, R.raw.die, R.raw.pause, R.raw.tpsound } );
         // Load the scene tiles from resource
-        this.loadFromFile(R.raw.scene);
+        this.loadFromFile(R.raw.scene2);
         // Add contact listeners by tag names
         this.addContactListener("bonk", "enemy", this);
         this.addContactListener("bonk", "coin", this);
@@ -66,7 +69,7 @@ public class Scene03 extends TiledScene implements OnContactListener {
         this.addContactListener("bonk", "endObject", this);
         this.addContactListener("bonk", "tp", this);
         this.addContactListener("bonk", "key", this);
-
+        bonk.setScore(totalScore);
         // Prepare the painters for drawing
         paintKeyBackground = new Paint();
         paintButton = new Paint();
@@ -77,6 +80,12 @@ public class Scene03 extends TiledScene implements OnContactListener {
         paintLivesBg = new Paint();
         paintLivesScore = new Paint();
         paintBigBackgroundSquare = new Paint();
+        paintSpendMoneyBG = new Paint();
+        paintSpendMoneyText = new Paint();
+        paintNoSpendMoneyBG = new Paint();
+        paintNoSpendMoneyText = new Paint();
+        paintPayString1 = new Paint();
+        paintPayString2 = new Paint();
         paintKeyBackground.setColor(Color.argb(20, 0, 0, 0));
         paintKeySymbol = new Paint();
         paintPauseText = new Paint();
@@ -84,9 +93,18 @@ public class Scene03 extends TiledScene implements OnContactListener {
         paintLivesScore.setTextSize(6);
         paintLivesScore.setColor(Color.WHITE);
         paintBigBackgroundSquare.setColor(Color.argb(200, 254, 255, 255));
-
+        paintSpendMoneyBG.setColor(Color.argb(20, 67,74, 76));
+        paintNoSpendMoneyBG.setColor(Color.argb(20, 67, 74,76));
+        paintNoSpendMoneyText.setColor(Color.RED);
+        paintNoSpendMoneyText.setTextSize(6);
+        paintSpendMoneyText.setColor(Color.RED);
+        paintSpendMoneyText.setTextSize(6);
         paintKeySymbol.setColor(Color.GRAY);
         paintKeySymbol.setTextSize(10);
+        paintPayString1.setColor(Color.WHITE);
+        paintPayString1.setTextSize(6);
+        paintPayString2.setColor(Color.WHITE);
+        paintPayString2.setTextSize(5);
         paintScore = new Paint(paintKeySymbol);
         Typeface typeface = ResourcesCompat.getFont(this.getContext(), R.font.dseg);
         paintScore.setTypeface(typeface);
@@ -124,6 +142,7 @@ public class Scene03 extends TiledScene implements OnContactListener {
             this.getGame().getAudio().playSoundFX(1);
             //object2.removeFromScene();
             bonk.die();
+            bonk.reset(0, 160);
 
         }
         else if(tag2.equals("booster")){
@@ -137,17 +156,26 @@ public class Scene03 extends TiledScene implements OnContactListener {
 
         }
         else if(tag2.equals("tp")){
-            switch (tpCount){
-                case 0:
-                    bonk.reset(460, 200);
-                    tpCount = 1;
-                    break;
+            showTpMessage = true;
 
-                case 1:
-                    bonk.reset(250, 200);
-                    tpCount = 0;
+
+            if(tpRepaired) {
+                showTpMessage = false;
+                switch (tpCount) {
+                    case 0:
+                        bonk.reset(480, 70);
+                        tpCount = 1;
+
+                        break;
+
+                    case 1:
+                        bonk.reset(470, 160);
+                        tpCount = 0;
+                }
+                this.getGame().getAudio().playSoundFX(3);
+            }else{
+
             }
-            this.getGame().getAudio().playSoundFX(3);
         }
         else if(tag2.equals("key")){
             keyPlantTaken = true;
@@ -231,15 +259,21 @@ public class Scene03 extends TiledScene implements OnContactListener {
                 if (touch.isDown()) bonk.jump();
             }
             else if(((y < 60) && (y> 40)) && ((x < 45) && (x > 25))){
+                if (!touch.isDown()) return;
+                    bonk.setScore(bonk.getScore() - 60);
+                    game.resume();
+                    bonk.reset(470, 160);
+                    showTpMessage = false;
+                    tpRepaired = true;
 
-                if(bonk.isDead) {
-                    bonk.state = STATE_STANDING_FRONT;
-                    bonk.health = 3;
-                    bonk.reset(20, 30);
-                    bonk.isDead = false;
 
-                }
-
+            }
+            else if(((y < 60) && (y> 40)) && ((x < 75) && (x > 54))) {
+                if (!touch.isDown()) return;
+                bonk.reset(470, 160);
+                game.resume();
+                showTpMessage = false;
+                tpRepaired = false;
             }
             else if(((y < 60) && (y> 40)) && ((x < 75) && (x > 54))) {
 
@@ -338,12 +372,24 @@ public class Scene03 extends TiledScene implements OnContactListener {
             canvas.drawText("Exit", 60, 57, paintExitText);
         }
 
+        if(showTpMessage == true){
+
+            canvas.drawRect( 100, 100, -40, -20, paintBigBackgroundSquare);
+            canvas.drawRect( 50, 50, 85, 60, paintNoSpendMoneyBG);
+            canvas.drawRect( 16, 50, 39, 60, paintSpendMoneyBG);
+            canvas.drawText("Pay", 23 , 57, paintSpendMoneyText);
+            canvas.drawText("Don't Pay", 55, 57, paintSpendMoneyText);
+            canvas.drawText("The Teleport has been destroyed.", 13, 25, paintPayString1);
+            canvas.drawText("You need to pay 60 coins in order to repair it.", 2, 40, paintPayString2);
+            game.pause();
+        }
+
         canvas.restore();
 
         // Score on top-right corner
         canvas.scale(getScale(), getScale());
         paintScore.setTextSize(10);
-        String score = String.format(Locale.getDefault(), "%06d", bonk.getScore());
+        String score = String.format(Locale.getDefault(), "%06d", totalScore);
         canvas.drawText(score, getScaledWidth() - 50, 10, paintScore);
 
     }
