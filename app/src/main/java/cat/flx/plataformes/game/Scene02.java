@@ -40,8 +40,8 @@ public class Scene02 extends TiledScene implements OnContactListener {
     boolean isPaused = false;
     boolean keyPlantTaken = false;
     int CoinValue = 10;
-
-
+    int totalScore = 0;
+    boolean teleportTaken = false;
     public Scene02(Game game) {
         super(game);
         GameEngine gameEngine = game.getGameEngine();
@@ -51,6 +51,7 @@ public class Scene02 extends TiledScene implements OnContactListener {
         bonk = new Bonk(game, 20, 30);
 
         this.add(bonk);
+
         // Set the follow camera to the player
         this.setCamera(bonk);
         // The screen will hold 16 rows of tiles (16px height each)
@@ -124,16 +125,33 @@ public class Scene02 extends TiledScene implements OnContactListener {
             this.getGame().getAudio().playSoundFX(1);
             //object2.removeFromScene();
             bonk.die();
+            totalScore = bonk.getScore();
+
 
         }
         else if(tag2.equals("booster")){
             // bonk.setScore(bonk.getScore() + 1);
             object2.removeFromScene();
             bonk.addScore(40);
+
         }
         else if(tag2.equals("endObject")){
-            object2.removeFromScene();
-            game.loadScene(new Scene02(game));
+
+
+            if(keyPlantTaken == true){
+                object2.removeFromScene();
+
+                game.loadScene(new Scene03(game));
+            }else{
+                Toast toast = Toast.makeText(
+                        game.getGameEngine().getContext(),
+                        "You need to take the key to end the level",
+                        Toast.LENGTH_SHORT // Short Duration
+                );
+                toast.setGravity(Gravity.CENTER, 0, 0);
+                toast.show();
+            }
+
 
         }
         else if(tag2.equals("tp")){
@@ -141,6 +159,7 @@ public class Scene02 extends TiledScene implements OnContactListener {
                 case 0:
                     bonk.reset(460, 200);
                     tpCount = 1;
+                    bonk.JUMP_VELOCITY = -12;
                     break;
 
                 case 1:
@@ -148,11 +167,12 @@ public class Scene02 extends TiledScene implements OnContactListener {
                     tpCount = 0;
             }
             this.getGame().getAudio().playSoundFX(3);
+            teleportTaken = true;
         }
         else if(tag2.equals("key")){
                 keyPlantTaken = true;
                 object2.removeFromScene();
-
+                bonk.JUMP_VELOCITY = -12;
         }
 
     }
@@ -204,7 +224,10 @@ public class Scene02 extends TiledScene implements OnContactListener {
             if (parts2.length != 2) return null;
             int boosterX = Integer.parseInt(parts2[0].trim()) * 16;
             int boosterY = Integer.parseInt(parts2[1].trim()) * 16;
-            return new KeyPlant(game, boosterX, boosterY);
+
+                return new KeyPlant(game, boosterX, boosterY);
+
+
         }
 
 
