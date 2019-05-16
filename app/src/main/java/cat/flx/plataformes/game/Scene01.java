@@ -3,7 +3,6 @@ package cat.flx.plataformes.game;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.PorterDuff;
 import android.graphics.Typeface;
 import android.support.v4.content.res.ResourcesCompat;
 import android.util.Log;
@@ -12,10 +11,7 @@ import android.view.KeyEvent;
 import android.widget.Button;
 import android.widget.Toast;
 
-import org.w3c.dom.Text;
-
 import java.util.Locale;
-import java.util.Timer;
 
 import cat.flx.plataformes.R;
 import cat.flx.plataformes.engine.Game;
@@ -297,8 +293,17 @@ class Scene01 extends TiledScene implements OnContactListener {
         else if(tag2.equals("booster")){
            // bonk.setScore(bonk.getScore() + 1);
             object2.removeFromScene();
+            bonk.isBoosted = true;
+            bonk.boosterTime = 0;
+            getAudio().stopMusic();
+            getAudio().loadMusic(R.raw.booster);
+            getAudio().startInvicibleMusic();
+            if (bonk.isBoosted == false){
+
+
+            }
             //bonk.JUMP_VELOCITY = -13;
-            game.loadScene(new Scene02(game));
+           // game.loadScene(new Scene03(game));
             totalScore = bonk.getScore();
         }
         else if(tag2.equals("endObject")){

@@ -49,13 +49,23 @@ public class Audio {
             mediaPlayer.start();
         }
     }
-
+    public void startInvicibleMusic(){
+        if (mediaPlayer != null) {
+            mediaPlayer.start();
+        }
+    }
     // Stop background music playing
     public void stopMusic() {
         if (mediaPlayer != null) {
             mediaPlayer.pause();
         }
     }
+    public void stopInvincibleMusic() {
+        if (mediaPlayer != null) {
+            mediaPlayer.pause();
+        }
+    }
+
 
     // Play a sound FX by index
     public void playSoundFX(int n) {

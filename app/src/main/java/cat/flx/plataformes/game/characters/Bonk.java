@@ -2,6 +2,7 @@ package cat.flx.plataformes.game.characters;
 
 import android.content.Context;
 import android.graphics.Rect;
+import android.util.Log;
 import android.view.Gravity;
 import android.widget.Toast;
 
@@ -25,7 +26,8 @@ public class Bonk extends GameObject {
     public int health = 3;
     private Toast toast;
     public boolean isDead = false;
-    public int boosterTime;
+    public long boosterTime = 0;
+    public boolean isBoosted = false;
 
 
     // Useful constants
@@ -126,18 +128,22 @@ public class Bonk extends GameObject {
     @Override public void physics(long deltaTime) {
         // If died, no physics
         if (state == STATE_DEAD) return;
-        boosterTime ++;
 
-        if(boosterTime > 4000) {
-            Toast toast = Toast.makeText(
-                    game.getGameEngine().getContext(),
-                    boosterTime,
-                    Toast.LENGTH_SHORT // Short Duration
-            );
-            toast.setGravity(Gravity.CENTER, 0, 0);
-            toast.show();
+        if(isBoosted == true) {
+            boosterTime += deltaTime;
+            if (boosterTime <= 10000){
+                JUMP_VELOCITY = -14;
+            }else{
+                isBoosted = false;
+                JUMP_VELOCITY = -8;
+                boosterTime = 0;
+                Log.d("ISBOOSED: ", String.valueOf(isBoosted));
 
+            }
+            Log.d("ISBOOSED2: ", String.valueOf(isBoosted));
         }
+         Log.d("DELTATIME: ", String.valueOf(boosterTime));
+
         // Analyze user input
         int vx = 0;
         if (this.isLeft()) vx = -this.vx;

@@ -70,7 +70,7 @@ public class Scene03 extends TiledScene implements OnContactListener {
         this.addContactListener("bonk", "endObject", this);
         this.addContactListener("bonk", "tp", this);
         this.addContactListener("bonk", "key", this);
-        this.addContactListener("bonk", "previousScene ", this);
+        this.addContactListener("bonk", "previousScene", this);
         bonk.setScore(totalScore);
         // Prepare the painters for drawing
         paintKeyBackground = new Paint();
@@ -182,6 +182,13 @@ public class Scene03 extends TiledScene implements OnContactListener {
         else if(tag2.equals("key")){
             keyPlantTaken = true;
             object2.removeFromScene();
+
+        }
+        else if(tag2.equals("previousScene")){
+
+            object2.removeFromScene();
+
+            game.loadScene(new Scene02(game));
 
         }
 
